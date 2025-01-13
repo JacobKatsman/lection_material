@@ -1,0 +1,97 @@
+\documentclass[12pt, leqno]{article}
+\usepackage[english,russian]{babel}
+\usepackage{fontspec}
+\usepackage[utf8]{inputenc}
+\usepackage{epigraph}
+\usepackage{tabularx}
+\usepackage[leqno]{amsmath}
+\setmainfont{Times New Roman}
+\setlength\parindent{0pt}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}        
+\usepackage{minted} 
+\usepackage[xetex,final]{graphicx}
+\usepackage{float}%"Плавающие" картинки
+\usepackage{wrapfig}%Обтекание фигур (таблиц, картинок и прочег
+\usepackage{epstopdf}
+\usepackage{amssymb}
+ 
+\begin{document}
+
+\section*{Числа Каталана. Рекурсия}
+\begin{flushleft}
+\textbf{Вопросы рекурсии:} Рекурентные формулы и реализация
+\end{flushleft}
+
+Числа Каталана удовлетворяют рекуррентному соотношению:
+
+$ C_{0}=1\quad  $ и $\quad C_{n}=\sum _{i=0}^{n-1}C_{i}C_{n-1-i}}$ для $ n\geqslant 1 $
+
+Также существует более простое рекуррентное соотношение (которое мы сдесь и используем): 
+
+$ C_{0}=1\quad  $ и $\quad C_{n}={\frac {2(2n-1)}{n+1}}C_{n-1}$
+
+
+ 
+\clearpage 
+ 
+Дальше можно смотреть по ссылке:
+
+\href{https://ru.wikipedia.org/wiki/Числа_Каталана}{Числа_Каталана}
+
+\noindent Образец кода на лисп (sbcl):  
+\begin{minted}[fontsize=\small]{lisp}
+
+;;;;
+;;;; Compute Catalan Number with recursion (вычисление чисел Каталана рекурентным способом)
+;;;; https://ru.wikipedia.org/wiki/Числа_Каталана
+;;;; http://www.math.bas.bg/bantchev/misc/catalan.pdf
+;;;; https://informatics.msk.ru/mod/book/view.php?id=266&chapterid=58
+;;;; https://oeis.org/A000108
+;;;; https://www.jdoodle.com/execute-clisp-online
+;;;; https://www.tutorialspoint.com/lisp/lisp_constants.htm
+;;;; 
+
+;; C_{0}=1\quad
+;; \quad C_{n}=\sum _{i=0}^{n-1}C_{i}C_{n-1-i}
+
+(defun CatalansNumbers(i)
+    (cond ((= i 0) 1)
+          ((= i 1) 1)
+          (t (* (/ (+ (* 4 (- i 1)) 2) ( + (- i 1) 2))  (CatalansNumbers  (- i 1))))
+    )
+)
+
+(defun domain(n acc)
+    (cond ((< n 0) acc)
+          (t (domain (- n 1) (cons n acc))))
+)
+
+(defun  computeFromDomain(n)
+    (mapcar (lambda (x) (CatalansNumbers x)) (domain n nil))
+)
+
+(defun cli/parameter()
+    (let (
+        (args sb-ext:*posix-argv*))
+        (car (cdr args))))
+
+;; main print
+;; input   ./exec6.lisp  <n = 6>
+(defun main()
+ (terpri)
+ (format T "~a" (computeFromDomain (parse-integer (cli/parameter))))
+)
+
+(main)
+
+\end{minted}  
+
+Ниже представлен результат:
+ 
+1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862, 16796, 58786, 208012, 742900, 2674440, 9694845, 35357670, 129644790, 477638700, 1767263190, 6564120420, 24466267020, 91482563640, 343059613650, 1289904147324, 4861946401452 
+
+ 
+
+  
+
+\end{document}

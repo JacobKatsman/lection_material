@@ -1,0 +1,80 @@
+\documentclass[12pt, leqno]{article}
+\usepackage[english,russian]{babel}
+\usepackage{fontspec}
+\usepackage[utf8]{inputenc}
+\usepackage{epigraph}
+\usepackage{tabularx}
+\usepackage[leqno]{amsmath}
+\setmainfont{Times New Roman}
+\setlength\parindent{0pt}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}        
+\usepackage{minted} 
+\usepackage[xetex,final]{graphicx}
+\usepackage{float}%"Плавающие" картинки
+\usepackage{wrapfig}%Обтекание фигур (таблиц, картинок и прочег
+\usepackage{epstopdf}
+\usepackage{amssymb}
+ 
+\begin{document}
+
+\section*{Биномиальные коээфициэнты. Рекурсия}
+\begin{flushleft}
+\textbf{Вопросы рекурсии:} Рекурентные формулы и реализация
+\end{flushleft}
+
+
+Биномиальные коэффициенты часто обозначаются   $ {\binom {n}{k}} $ 
+и читаются и читаются как «число сочетаний из $ n $ элементов по $ k $
+
+
+вот эта формула в коде взята отсюда:
+\begin{flushleft}
+{\binom {n}{k}} = \binom {n}{k - 1}\times {\frac {n+1-k}{k}}
+\end{flushleft}
+
+\clearpage
+
+\noindent Образец кода на haskell :  
+\begin{minted}[fontsize=\small]{haskell}
+
+module Math where
+
+{- Binomial cooeficient Newtone / pascal  triangle -}
+{- http://mech.math.msu.su/~shvetz/54/inf/perl-examples/PerlExamples_PascalTriangle.xhtml -}
+{- https://stackoverflow.com/questions/42798257/add-a-element-at-the-end-of-list-in-haskell -}
+{- https://rosettacode.org/wiki/List_comprehensions -}
+
+pascal :: Integral a => a -> a -> a  
+pascal 0 0 = 1
+pascal n 0 = 1
+pascal n r | n == r = 1
+           | otherwise  = pascal (n - 1) (r - 1) + pascal (n - 1) r
+
+binom :: Integral a => a -> [a]
+binom n = map (pascal n) [0..n]
+
+makeTriangle :: Integer -> [[Integer]]
+makeTriangle  n = [ (binom x) | x <- [1..n]]
+
+
+module Main where
+
+import Math
+
+{- https://libeldoc.bsuir.by/bitstream/123456789/56340/1/Mychko_Treugol%27nik.pdf -}
+{- http://mech.math.msu.su/~shvetz/54/inf/perl-examples/PerlExamples_PascalTriangle.xhtml -}
+{- http://mech.math.msu.su/~vvb/Dush/Haskell/index.html -}
+{- https://gist.github.com/gubatron/c690b46f72e0bb1bab378da8a49348c1 -}
+
+listToString = unwords. map show
+printTriangle n = mapM_ putStrLn (map listToString (makeTriangle 10))
+
+main = printTriangle 10
+
+
+
+\end{minted}  
+
+результат нужно получить самостоятельно:
+    
+\end{document}

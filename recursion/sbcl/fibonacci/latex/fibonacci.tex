@@ -1,0 +1,154 @@
+\documentclass[12pt, leqno]{article}
+\usepackage[english,russian]{babel}
+\usepackage{fontspec}
+\usepackage[utf8]{inputenc}
+\usepackage{epigraph}
+\usepackage{tabularx}
+\usepackage[leqno]{amsmath}
+\setmainfont{Times New Roman}
+\setlength\parindent{0pt}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}        
+\usepackage{minted} 
+\usepackage[xetex,final]{graphicx}
+\usepackage{float}%"Плавающие" картинки
+\usepackage{wrapfig}%Обтекание фигур (таблиц, картинок и прочег
+\usepackage{epstopdf}
+\usepackage{amssymb}
+ 
+\begin{document}
+
+\section*{Числа фибоначчи. Рекурсия}
+\begin{flushleft}
+\textbf{Вопросы рекурсии:} Рекурентные формулы и реализация
+\end{flushleft}
+
+Последовательность чисел Фибоначчи  $ F_{n} $ задаётся линейным рекуррентным соотношением: 
+
+$ F_{0}=0,\quad F_{1}=1,\quad F_{n}=F_{n-1}+F_{n-2} $ где $ n \geqslant 2,\ n\in \mathbb {Z}$ 
+ 
+
+На Западе эта последовательность была исследована Леонардо Пизанским, известным как Фибоначчи, в его труде «Книга абака» (1202) . Он рассматривает развитие идеализированной (биологически нереальной) популяции кроликов, где условия таковы: изначально дана новорождённая пара кроликов (самец и самка); со второго месяца после своего рождения кролики начинают спариваться и производить новую пару кроликов, причём уже каждый месяц; кролики никогда не умирают, — а в качестве искомого выдвигает количество пар кроликов через год:
+
+\begin{enumerate}
+    \item начале первого месяца есть только одна новорождённая пара (1);\\
+    \item конце первого месяца по-прежнему только одна пара кроликов, но уже спарившаяся (1);\\
+    \item конце второго месяца первая пара рождает новую пару и опять спаривается (2);\\
+    \item конце третьего месяца первая пара рождает ещё одну новую пару и спаривается, вторая пара только спаривается (3).\\
+    \item конце четвёртого месяца первая пара рождает ещё одну новую пару и спаривается, вторая пара рождает новую пару и спаривается, третья пара только спаривается (5).\\
+\end{enumerate}
+
+В конце n-го месяца количество пар кроликов будет равно количеству пар в предыдущем месяце плюс количеству новорождённых пар, которых будет столько же, сколько пар было два месяца назад, то есть $ F_{0}=0,\quad F_{1}=1,\quad F_{n}=F_{n-1}+F_{n-2} $. Возможно, эта задача также оказалась первой, моделирующей экспоненциальный рост популяции. 
+ 
+ 
+
+\clearpage 
+ 
+Дальше можно смотреть по ссылке:
+
+\href{https://ru.wikipedia.org/wiki/Числа_Фибоначчи}{Числа Фибоначчи}
+
+
+\clearpage 
+
+\noindent Образец кода на лисп (sbcl):  
+\begin{minted}[fontsize=\small]{lisp}
+
+;;;; Programm for calculation Fibnacci sequences
+;;;; https://www.jdoodle.com/execute-clisp-online
+
+;;; FIB computes the the Fibonacci function in the traditional
+;;; recursive way.
+
+
+;; Fibonacci  calc function. 
+(defun fib(n)
+    (check-type n integer)
+    ;; At this point we're sure we have an integer argument.
+    ;; Now we can get down to some serious computation.
+    (cond  ((= n 0) 0)
+           ((= n 1) 1)
+           (t ( +  (fib (- n 2))       ; The traditional formula
+                   (fib (- n 1)) )))   ; is fib[n-1]+fib[n-2].
+)
+
+(defun cli/parameter()
+;;Get command line argument" 
+    (let (
+        (args sb-ext:*posix-argv*))
+        (car (cdr args)))
+)
+
+(defun makeDomain(num acc)
+;;Make domain's interval from 0 to num " 
+    (cond ((eq num 0) acc)
+          (t (makeDomain (- num 1) (cons num acc))))
+)
+
+;; call fib  function for  interval
+;; input   ./exec4.lisp  <n = 25>
+;; main print
+(defun main()
+    (terpri)
+    (format T "~a" (mapcar 'fib (makeDomain (parse-integer (cli/parameter)) nil)))
+)
+
+(main)
+
+;;--------------------------
+
+\end{minted}  
+
+
+\noindent Образец кода на haskell:
+
+
+\begin{minted}[fontsize=\small]{haskell}
+module Math where
+
+fib :: Int -> Int
+fib 0 = 0
+fib 1 = 1
+fib n = fib (n-1) + fib (n-2)
+
+
+-- The memoized version is much faster. Try memoized_fib 10000.
+-- http://wiki.haskell.org/Memoization
+-- http://lin-techdet.blogspot.com/2015/07/haskell.html
+
+memoized_fib :: Int -> Integer
+memoized_fib = (map fib [0 ..] !!)
+   where fib 0 = 0
+         fib 1 = 1
+         fib n = memoized_fib (n-2) + memoized_fib (n-1)
+\end{minted}  
+
+Мain.hs:
+\begin{minted}[fontsize=\small]{haskell}
+module Main where
+
+import System.Environment   
+import Data.List  
+import Math
+
+{- https://stackoverflow.com/questions/1105765/generating-fibonacci-numbers-in-haskell -}
+
+getIntArg :: IO Int
+getIntArg = fmap (read . head) getArgs
+
+main = do  
+    args <- getIntArg              -- IO [Int]
+    putStrLn "The arguments are:"  
+    print (fib args)
+\end{minted} 
+
+\clearpage 
+Ниже представлен результат для $ n = 20$
+
+
+0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711
+
+ 
+
+  
+
+\end{document}
