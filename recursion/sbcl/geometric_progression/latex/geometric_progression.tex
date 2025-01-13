@@ -1,0 +1,108 @@
+\documentclass[12pt, leqno]{article}
+\usepackage[english,russian]{babel}
+\usepackage{fontspec}
+\usepackage[utf8]{inputenc}
+\usepackage{epigraph}
+\usepackage{tabularx}
+\usepackage[leqno]{amsmath}
+\setmainfont{Times New Roman}
+\setlength\parindent{0pt}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}        
+\usepackage{minted} 
+\usepackage[xetex,final]{graphicx}
+\usepackage{float}%"Плавающие" картинки
+\usepackage{wrapfig}%Обтекание фигур (таблиц, картинок и прочег
+\usepackage{epstopdf}
+ 
+\begin{document}
+
+\section*{Геометрическая прогрессия. Рекурсия}
+\begin{flushleft}
+\textbf{Вопросы рекурсии:} Рекурентные формулы и реализация
+\end{flushleft}
+
+Геометричекая прогрессия — числовая последовательность вида: 
+
+\begin{equation}
+ a,\ ar,\ ar^{2},\ ar^{3},\ ar^{4},\ \ldots
+\end{equation}
+
+рекурентная форму имеет вид:
+
+
+\begin{equation}
+a_{n}=a\,r^{n-1}
+\end{equation}
+
+Общий член арифметической прогрессии $a_{n}=r\,a_{n-1}$ для  $ n>1 $
+
+
+Сумма первых $ n $ членов геометрической прогрессии  
+\begin{equation}
+S_{n}={\begin{cases}\sum \limits _{i=1}^{n}b_{i}={\dfrac {b_{1}-b_{1}q^{n}}{1-q}}={\dfrac {b_{1}\left(1-q^{n}\right)}{1-q}},&amp;{\mbox{if }}q\neq 1\\\\nb_{1},&amp;{\mbox{if }}q=1\end{cases}}
+\end{equation}
+  
+
+
+
+Дальше можно смотреть по ссылке:
+
+\href{https://ru.wikipedia.org/wiki/Геометрическая_прогрессия}{Геометрическая прогрессия}
+
+
+\clearpage 
+
+\noindent Образец кода на лисп (sbcl):  
+ 
+\begin{minted}[fontsize=\small]{lisp}
+;;;; Geometric Progression
+(defconstant s 7 "cooef")
+
+;; https://allcalc.ru/node/1001
+;; https://en.wikipedia.org/wiki/Geometric_progression
+
+
+;;; This function recursively build pregression
+(defun geometricProgression (summ n)
+(
+;;Count 'cond'-ition statement"                 
+    cond ((<= n 0 ) nil)
+         (t (cons ( * summ  s)  (geometricProgression   ( * summ  s ) (- n 1)))) 
+    )
+)
+
+(defun cli/parameter()
+;; Get command line argument" 
+    (let (
+        (args sb-ext:*posix-argv*))
+        (car (cdr args)))
+)
+
+;; main print
+;; input   ./geometricProgression.lisp  <n = 7>
+(defun main()
+(terpri)
+(time (
+       format T "~a  SUMM = ~d" 
+       (geometricProgression 1 (- ( parse-integer (cli/parameter)) 1))
+       (apply '+ (geometricProgression 1 (- ( parse-integer (cli/parameter)) 1) ))
+       ))
+)
+(main)
+
+
+
+\end{minted}  
+
+\clearpage 
+Ниже представлен результат для $ n = 7$
+
+\begin{figure}[h]
+\center{\includegraphics[width=0.8\textwidth,natwidth=610,natheight=642]{./img/geometric.png}}
+\caption{Скриншот вывода нашего скрипта}
+\label{ris:image}
+\end{figure}
+
+  
+
+\end{document}
